@@ -254,6 +254,29 @@ semantic_df <- fromJSON(resp_body_string(resp))$results
 semantic_df[, c("title", "cited_by_count")]
 ```
 
+### Endpoint 5 - Descarga de PDF (\1$ por 100 PDFs)
+
+```{r}
+# Primero comprueba si tiene PDF disponible
+resp <- request(base_url) |>
+  req_url_path_append("works", "https://doi.org/10.1057/s41599-026-06604-6") |>
+  req_url_query(api_key = api_key) |>
+  req_perform()
+
+work <- fromJSON(resp_body_string(resp))
+work$has_content   # TRUE/FALSE para pdf y grobid_xml
+work$content_url   # la URL base para descargarlo
+```
+
+```{r}
+# Si has_content$pdf es TRUE, descarga así
+request(paste0("https://content.openalex.org/works/", gsub('https://openalex.org/', '', work$id), ".pdf")) |>
+  req_url_query(api_key = api_key) |>
+  req_perform() |>
+  resp_body_raw() |>
+  writeBin("papers/paper.pdf")
+```
+
 ------------------------------------------------------------------------
 
 ## Lo mismo pero con openalexR 🧅
@@ -347,6 +370,7 @@ Para exploración rápida o cuando no me importa el control al detalle, `openale
 | List + Filter   | \$0.10 / 1K | Consultas estructuradas por campo    |
 | Search          | \$1 / 1K    | Búsqueda por palabras clave en texto |
 | Semantic Search | \$1 / 1K    | Búsqueda por concepto o significado  |
+| Descarga PDF    | \$1 / 100   | Descarga el PDF si está disponible   |
 
 Reglas básicas para no gastar de más:
 
