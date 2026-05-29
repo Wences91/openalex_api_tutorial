@@ -1,0 +1,357 @@
+---
+title: "OpenAlex API"
+author: "Wenceslao Arroyo-Machado"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+    highlight: tango
+---
+
+## Consulta manual
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## Librerías y configuración
+
+Solo necesitamos dos librerías: `httr2` para las peticiones y `jsonlite` para parsear el JSON.
+
+```{r}
+library(httr2)
+library(jsonlite)
+```
+
+La API key va en `.Renviron` para que nunca aparezca en el código. Si aún no la tienes:
+
+``` r
+# Ejecuta esto una vez y añade la línea: OPENALEX_API_KEY=tu_clave
+file.edit("~/.Renviron")
+```
+
+```{r}
+api_key  <- Sys.getenv("OPENALEX_API_KEY")
+base_url <- "https://api.openalex.org"
+```
+
+------------------------------------------------------------------------
+
+## Revisión de la API
+
+Antes de nada, revisa:
+
+-   Documentación de la API - [Enlace](https://developers.openalex.org/api-reference/introduction)
+
+-   JSON de un documento de la API - [Enlace](https://api.openalex.org/works/https://doi.org/10.1016/j.joi.2026.101800)
+
+## ¿Cuánto me queda hoy?
+
+Antes de lanzar consultas pesadas conviene revisar el consumo. El límite gratuito es **\$1 al día**, que da para bastante si se usa bien.
+
+```{r}
+resp <- request(base_url) |>
+  req_url_path_append("rate-limit") |>
+  req_url_query(api_key = api_key) |>
+  req_perform()
+
+rl <- fromJSON(resp_body_string(resp))$rate_limit
+
+cat("Presupuesto diario: ", rl$daily_budget_usd, "$\n", sep = "")
+cat("Consumido hoy: ", rl$daily_used_usd, "$\n", sep = "")
+cat("Restante: ", rl$daily_remaining_usd, "$\n", sep = "")
+cat("Reset en: ",  round(rl$resets_in_seconds / 3600, 1), "horas\n", sep = "")
+```
+
+También puedes verlo visualmente en [openalex.org/settings/usage](https://openalex.org/settings/usage).
+
+Además, cada respuesta incluye headers con el estado de la llamada. Muy útil para monitorizar en bucles:
+
+```{r}
+resp <- request(base_url) |>
+  req_url_path_append("works", "https://doi.org/10.1016/j.joi.2026.101800") |>
+  req_url_query(api_key = api_key) |>
+  req_perform()
+
+resp[["headers"]][["x-ratelimit-remaining"]] # consultas restantes hoy
+resp[["headers"]][["x-ratelimit-cost-usd"]]   # coste de esa llamada concreta
+```
+
+------------------------------------------------------------------------
+
+## Endpoint 1 - Singleton (gratis)
+
+Recuperar un trabajo concreto por DOI no tiene coste. Ideal cuando ya tienes los identificadores y solo quieres los metadatos.
+
+```{r}
+resp <- request(base_url) |>
+  req_url_path_append("works", "https://doi.org/10.1016/j.joi.2026.101800") |> # en este caso es con URL
+  req_url_query(api_key = api_key) |>
+  req_perform()
+
+work <- fromJSON(resp_body_string(resp))
+
+cat("Título: ", work$title, "\n", sep = "")
+cat("Año: ",    work$publication_year, "\n", sep = "")
+cat("DOI: ",    work$doi, "\n", sep = "")
+cat("Topic: ",  work$topics$display_name[1], "\n", sep = "")
+```
+
+El batch por DOIs (hasta 100 a la vez con `|`) no es gratis porque usa list+filter (se explica a continuación), aunque con coste mínimo (\$0.10 por 1.000 llamadas):
+
+```{r}
+resp <- request(base_url) |>
+  req_url_path_append("works") |>
+  req_url_query(
+    filter  = "doi:10.1016/j.joi.2024.101546|10.1016/j.joi.2026.101800", # aquí sin URL
+    select  = "id,title,doi,publication_year,topics",
+    api_key = api_key
+  ) |>
+  req_perform()
+
+batch_df <- fromJSON(resp_body_string(resp))$results
+batch_df[, c("title", "doi", "publication_year")]
+batch_df$topic_main <- sapply(batch_df$topics, function(x) x$display_name[1])
+
+batch_df
+
+```
+
+------------------------------------------------------------------------
+
+## Endpoint 2 - List + Filter (\$0.10 por 1.000 llamadas)
+
+El más común. Permite filtrar por institución, año, tipo de documento, revista... Para INGENIO uso el ROR `02rgtxm82`.
+
+### Antes de paginar, estima el coste
+
+La primera llamada devuelve `meta$count` con el total de resultados. Con eso puedo calcular cuántas llamadas necesito y cuánto me va a costar **antes de lanzarlas todas**.
+
+Dos recomendaciones:
+
+-   Usar siempre `per_page=100`. Es el máximo y reduce el número de llamadas por 10 respecto al valor por defecto. El coste depende de la llamada.
+-   Usar `select=` para pedir solo los campos necesarios. Respuestas más rápidas y menos datos que parsear.
+
+Igualmente, existen dos tipos de paginaciones:
+
+-   Paginación normal (`page=x`) es más simple y suficiente si tu consulta tiene pocos resultados ya que le indicas que vaya pasando página por página. Pero no puede llegar a superar 10.000 resultados y si se actualizan los datos puede generar inconsistencias.
+
+-   Cursor paging (`cursor=x`) es necesario por encima de ese límite y más robusto si los datos pueden cambiar mientras paginas.
+
+```{r}
+resp <- request(base_url) |>
+  req_url_path_append("works") |>
+  req_url_query(
+    filter   = "institutions.ror:https://ror.org/02rgtxm82,publication_year:2020-2025",
+    per_page = 100,
+    select   = "id,title,publication_year,cited_by_count,topics,authorships",
+    api_key  = api_key
+  ) |>
+  req_perform()
+
+raw <- fromJSON(resp_body_string(resp))
+
+total      <- raw$meta$count
+coste_call <- as.numeric(resp[["headers"]][["x-ratelimit-cost-usd"]])
+n_calls    <- ceiling(total / 100)
+
+cat("Total resultados: ", total, "\n", sep = "")
+cat("Llamadas para paginarlo todo: ", n_calls, "\n", sep = "")
+cat("Coste estimado total: ", format(round(n_calls * coste_call, 4), scientific = FALSE), "$\n", sep = "")
+```
+
+### Construir el data.frame
+
+`fromJSON` sin `flatten` devuelve `$results` con los campos simples ya como columnas de un data.frame. Los campos anidados como `topics` quedan como columnas de listas y hay que extraerlos aparte con `sapply`. Además, el uso de cursor para paginar requiere de un bucle.
+
+```{r}
+
+all_results <- data.frame()
+cursor      <- "*"
+
+while (!is.null(cursor)) {
+  resp <- request(base_url) |>
+    req_url_path_append("works") |>
+    req_url_query(
+      filter   = "institutions.ror:https://ror.org/02rgtxm82,publication_year:2020-2025",
+      per_page = 100,
+      select   = "id,title,publication_year,cited_by_count,fwci,topics",
+      cursor   = cursor,
+      api_key  = api_key
+    ) |>
+    req_perform()
+
+  raw    <- fromJSON(resp_body_string(resp))
+  cursor <- raw$meta$next_cursor
+
+  # Campos simples: ya son columnas directas
+  works_df <- raw$results[, c("id", "title", "publication_year", "cited_by_count", "fwci")]
+  
+  # Topic principal (primer elemento de la lista)
+  works_df$topic <- sapply(raw$results$topics, function(x) {
+    if (length(x) > 0) x$display_name[1] else NA
+  })
+  
+  all_results <<- rbind.data.frame(all_results, works_df)
+
+  cat("Descargados: ", round(100*dim(all_results)[1]/raw$meta$count,1), "%\r", sep = "")
+  
+}
+
+head(all_results)
+```
+
+------------------------------------------------------------------------
+
+## Endpoint 3 - Search (\$1 por 1.000 llamadas)
+
+Búsqueda de texto completo en títulos, abstracts y texto completo cuando está disponible. Cuesta 10 veces más que list+filter, así que solo cuando realmente sea necesario.
+
+```{r}
+resp <- request(base_url) |>
+  req_url_path_append("works") |>
+  req_url_query(
+    search   = "social media metrics",
+    per_page = 25,
+    select   = "id,title,cited_by_count",
+    sort     =  "cited_by_count:desc",
+    api_key  = api_key
+  ) |>
+  req_perform()
+
+
+cat("Consumido hoy: ", resp[["headers"]][["x-ratelimit-remaining"]], "$\n", sep = "")
+cat("Coste de la última llamada: ", resp[["headers"]][["x-ratelimit-cost-usd"]], "$\n", sep = "")
+
+
+raw       <- fromJSON(resp_body_string(resp))
+search_df <- raw$results
+
+cat("Resultados encontrados:", raw$meta$count, "\n")
+head(search_df[, c("title", "cited_by_count")])
+```
+
+------------------------------------------------------------------------
+
+## Endpoint 4 - Semantic Search (\$1 por 1.000 llamadas)
+
+Búsqueda semántica con IA. En lugar de palabras clave exactas, busca por significado. Útil para explorar literatura cuando no sé exactamente qué términos se usan en un campo.
+
+```{r}
+resp <- request(base_url) |>
+  req_url_path_append("works") |>
+  req_url_query(
+    search.semantic = "wikipedia as a social media metric for measuring social attention in science",
+    per_page        = 25,
+    select          = "id,title,cited_by_count",
+    api_key         = api_key
+  ) |>
+  req_perform()
+
+semantic_df <- fromJSON(resp_body_string(resp))$results
+semantic_df[, c("title", "cited_by_count")]
+```
+
+------------------------------------------------------------------------
+
+## Lo mismo pero con openalexR 🧅
+
+`openalexR` es un paquete de rOpenSci que envuelve todo lo anterior en una sola función: `oa_fetch()`. Hace la query, la petición y la conversión a data.frame en un solo paso. Ideal si no necesitas control fino sobre los headers o la paginación (como control de costes).
+
+```{r}
+#install.packages("openalexR")
+library(openalexR)
+```
+
+La API key se configura una vez en `.Rprofile` o `.Renviron`:
+
+```{r}
+# En .Rprofile:
+options(openalexR.apikey = api_key)
+
+# O en .Renviron:
+# openalexR.apikey = tu_clave
+```
+
+### Singleton por DOI
+
+```{r}
+work_oar <- oa_fetch(
+  entity  = "works",
+  doi     = "10.1016/j.joi.2026.101800",
+  verbose = TRUE
+)
+
+work_oar[, c("display_name", "publication_year", "doi")]
+```
+
+### List + Filter - INGENIO 2020-2025
+
+`oa_fetch` pagina automáticamente y devuelve todos los resultados de una vez. Topics y autores ya vienen en columnas de listas limpias.
+
+```{r}
+works_ingenio <- oa_fetch(
+  entity                = "works",
+  institutions.ror      = "https://ror.org/02rgtxm82",
+  from_publication_date = "2020-01-01",
+  to_publication_date   = "2025-12-31",
+  verbose               = TRUE
+)
+
+# Topic principal
+works_ingenio$topic_main <- sapply(works_ingenio$topics, function(x) {
+  if (!is.null(x) && nrow(x) > 0) x$display_name[1] else NA
+})
+
+head(works_ingenio[, c("display_name", "publication_year", "cited_by_count", "topic_main")])
+```
+
+### Search por título
+
+```{r}
+works_search_oar <- oa_fetch(
+  entity       = "works",
+  title.search = c("bibliometric analysis OR science mapping"),
+  cited_by_count = ">100",
+  from_publication_date = "2020-01-01",
+  to_publication_date   = "2021-12-31",
+  options      = list(sort = "cited_by_count:desc"),
+  verbose      = TRUE
+)
+
+head(works_search_oar[, c("display_name", "cited_by_count")])
+```
+
+### ¿Cuándo usar cada una?
+
+|   | `httr2` + `jsonlite` | `openalexR` |
+|------------------------|------------------------|------------------------|
+| Control sobre headers y costes | Sí | No |
+| Paginación automática | Manual | Automática |
+| Campos anidados | Hay que extraerlos | Vienen más limpios |
+| Flexibilidad de query | Total | Limitada a los argumentos de `oa_fetch` |
+| Curva de aprendizaje | Mayor | Menor |
+
+Para exploración rápida o cuando no me importa el control al detalle, `openalexR`. Para pipelines de producción donde quiero monitorizar el consumo o construir queries complejas, `httr2`.
+
+------------------------------------------------------------------------
+
+## Resumen de costes
+
+| Endpoint        | Coste       | Cuándo usarlo                        |
+|-----------------|-------------|--------------------------------------|
+| Singleton       | Gratis      | Tengo DOIs o IDs concretos           |
+| List + Filter   | \$0.10 / 1K | Consultas estructuradas por campo    |
+| Search          | \$1 / 1K    | Búsqueda por palabras clave en texto |
+| Semantic Search | \$1 / 1K    | Búsqueda por concepto o significado  |
+
+Reglas básicas para no gastar de más:
+
+-   Usar siempre `per_page=100`
+-   Estimar el coste con `meta$count` antes de paginar
+-   Usar `select=` para pedir solo los campos necesarios
+-   Guardar la API key en `.Renviron`, nunca en el código
+-   Revisar `x-ratelimit-remaining` en bucles largos
+-   Salvo consultas muy reducidas y sencilla, usar cursor para paginar
