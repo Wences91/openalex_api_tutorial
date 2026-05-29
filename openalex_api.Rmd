@@ -10,13 +10,13 @@ output:
     highlight: tango
 ---
 
-## Consulta manual
+## Consulta manual 🫂
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-## Librerías y configuración
+### Librerías y configuración
 
 Solo necesitamos dos librerías: `httr2` para las peticiones y `jsonlite` para parsear el JSON.
 
@@ -39,7 +39,7 @@ base_url <- "https://api.openalex.org"
 
 ------------------------------------------------------------------------
 
-## Revisión de la API
+### Revisión de la API
 
 Antes de nada, revisa:
 
@@ -47,7 +47,7 @@ Antes de nada, revisa:
 
 -   JSON de un documento de la API - [Enlace](https://api.openalex.org/works/https://doi.org/10.1016/j.joi.2026.101800)
 
-## ¿Cuánto me queda hoy?
+### ¿Cuánto me queda hoy?
 
 Antes de lanzar consultas pesadas conviene revisar el consumo. El límite gratuito es **\$1 al día**, que da para bastante si se usa bien.
 
@@ -81,7 +81,7 @@ resp[["headers"]][["x-ratelimit-cost-usd"]]   # coste de esa llamada concreta
 
 ------------------------------------------------------------------------
 
-## Endpoint 1 - Singleton (gratis)
+### Endpoint 1 - Singleton (gratis)
 
 Recuperar un trabajo concreto por DOI no tiene coste. Ideal cuando ya tienes los identificadores y solo quieres los metadatos.
 
@@ -121,7 +121,7 @@ batch_df
 
 ------------------------------------------------------------------------
 
-## Endpoint 2 - List + Filter (\$0.10 por 1.000 llamadas)
+### Endpoint 2 - List + Filter (\$0.10 por 1.000 llamadas)
 
 El más común. Permite filtrar por institución, año, tipo de documento, revista... Para INGENIO uso el ROR `02rgtxm82`.
 
@@ -162,7 +162,7 @@ cat("Llamadas para paginarlo todo: ", n_calls, "\n", sep = "")
 cat("Coste estimado total: ", format(round(n_calls * coste_call, 4), scientific = FALSE), "$\n", sep = "")
 ```
 
-### Construir el data.frame
+#### Construir el data.frame
 
 `fromJSON` sin `flatten` devuelve `$results` con los campos simples ya como columnas de un data.frame. Los campos anidados como `topics` quedan como columnas de listas y hay que extraerlos aparte con `sapply`. Además, el uso de cursor para paginar requiere de un bucle.
 
@@ -205,7 +205,7 @@ head(all_results)
 
 ------------------------------------------------------------------------
 
-## Endpoint 3 - Search (\$1 por 1.000 llamadas)
+### Endpoint 3 - Search (\$1 por 1.000 llamadas)
 
 Búsqueda de texto completo en títulos, abstracts y texto completo cuando está disponible. Cuesta 10 veces más que list+filter, así que solo cuando realmente sea necesario.
 
@@ -235,7 +235,7 @@ head(search_df[, c("title", "cited_by_count")])
 
 ------------------------------------------------------------------------
 
-## Endpoint 4 - Semantic Search (\$1 por 1.000 llamadas)
+### Endpoint 4 - Semantic Search (\$1 por 1.000 llamadas)
 
 Búsqueda semántica con IA. En lugar de palabras clave exactas, busca por significado. Útil para explorar literatura cuando no sé exactamente qué términos se usan en un campo.
 
@@ -355,3 +355,43 @@ Reglas básicas para no gastar de más:
 -   Guardar la API key en `.Renviron`, nunca en el código
 -   Revisar `x-ratelimit-remaining` en bucles largos
 -   Salvo consultas muy reducidas y sencilla, usar cursor para paginar
+
+## Caso de uso - Publicaciones de INGENIO (últimos 5 años) 🪤
+
+Recuperar todos los artículos y reviews en revista de INGENIO entre 2021 y 2025 con autoría, topic principal, fuente, FWCI y citas, y exportarlo a CSV.
+
+> **Advertencia de coste.** `oa_fetch` pagina automáticamente hasta agotar todos los resultados. Cada 100 registros es una llamada de list+filter a \$0.10 por 1.000. Para \~300 trabajos son unas 3 llamadas, **menos de \$0.001**. Si amplías el rango temporal o la institución tiene mucha producción, puede subir.
+
+```{r}
+
+ingenio_raw <- oa_fetch(
+  entity                = "works",
+  institutions.ror      = "https://ror.org/02rgtxm82",
+  from_publication_date = "2021-01-01",
+  to_publication_date   = "2025-12-31",
+  type                  = c("article", "review"),
+  verbose               = TRUE
+)
+
+# Topic principal
+ingenio_raw$topic_main <- sapply(ingenio_raw$topics, function(x) {
+  if (!is.null(x) && nrow(x) > 0) x$display_name[1] else NA
+})
+
+# Autores concatenados
+ingenio_raw$authors <- sapply(ingenio_raw$authorships, function(x) {
+  if (!is.null(x) && nrow(x) > 0) paste(x$display_name, collapse = "; ") else NA
+})
+
+# Seleccionar y renombrar
+ingenio_df <- ingenio_raw[, c("id","display_name", "authors", "publication_year",
+                               "type", "source_display_name", "topic_main", "cited_by_count", "fwci", "doi")]
+
+names(ingenio_df)[c(2, 6)] <- c("title", "source")
+
+head(ingenio_df)
+```
+
+```{r}
+write.csv(ingenio_df, "ingenio_works.csv", row.names = FALSE, fileEncoding = "UTF-8")
+```

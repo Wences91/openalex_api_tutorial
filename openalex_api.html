@@ -1577,10 +1577,9 @@ border-radius: 0px;
 
 
 <div id="consulta-manual" class="section level2">
-<h2>Consulta manual</h2>
-</div>
-<div id="librerías-y-configuración" class="section level2">
-<h2>Librerías y configuración</h2>
+<h2>Consulta manual 🫂</h2>
+<div id="librerías-y-configuración" class="section level3">
+<h3>Librerías y configuración</h3>
 <p>Solo necesitamos dos librerías: <code>httr2</code> para las
 peticiones y <code>jsonlite</code> para parsear el JSON.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(httr2)</span>
@@ -1593,16 +1592,16 @@ código. Si aún no la tienes:</p>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>base_url <span class="ot">&lt;-</span> <span class="st">&quot;https://api.openalex.org&quot;</span></span></code></pre></div>
 <hr />
 </div>
-<div id="revisión-de-la-api" class="section level2">
-<h2>Revisión de la API</h2>
+<div id="revisión-de-la-api" class="section level3">
+<h3>Revisión de la API</h3>
 <p>Antes de nada, revisa:</p>
 <ul>
 <li><p>Documentación de la API - <a href="https://developers.openalex.org/api-reference/introduction">Enlace</a></p></li>
 <li><p>JSON de un documento de la API - <a href="https://api.openalex.org/works/https://doi.org/10.1016/j.joi.2026.101800">Enlace</a></p></li>
 </ul>
 </div>
-<div id="cuánto-me-queda-hoy" class="section level2">
-<h2>¿Cuánto me queda hoy?</h2>
+<div id="cuánto-me-queda-hoy" class="section level3">
+<h3>¿Cuánto me queda hoy?</h3>
 <p>Antes de lanzar consultas pesadas conviene revisar el consumo. El
 límite gratuito es <strong>$1 al día</strong>, que da para bastante si
 se usa bien.</p>
@@ -1616,11 +1615,11 @@ se usa bien.</p>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Presupuesto diario: &quot;</span>, rl<span class="sc">$</span>daily_budget_usd, <span class="st">&quot;$</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
 <pre><code>## Presupuesto diario: 1$</code></pre>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Consumido hoy: &quot;</span>, rl<span class="sc">$</span>daily_used_usd, <span class="st">&quot;$</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
-<pre><code>## Consumido hoy: 0.0122$</code></pre>
+<pre><code>## Consumido hoy: 0.0254$</code></pre>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Restante: &quot;</span>, rl<span class="sc">$</span>daily_remaining_usd, <span class="st">&quot;$</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
-<pre><code>## Restante: 0.9878$</code></pre>
+<pre><code>## Restante: 0.9746$</code></pre>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Reset en: &quot;</span>,  <span class="fu">round</span>(rl<span class="sc">$</span>resets_in_seconds <span class="sc">/</span> <span class="dv">3600</span>, <span class="dv">1</span>), <span class="st">&quot;horas</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
-<pre><code>## Reset en: 18.3horas</code></pre>
+<pre><code>## Reset en: 14.2horas</code></pre>
 <p>También puedes verlo visualmente en <a href="https://openalex.org/settings/usage">openalex.org/settings/usage</a>.</p>
 <p>Además, cada respuesta incluye headers con el estado de la llamada.
 Muy útil para monitorizar en bucles:</p>
@@ -1630,13 +1629,13 @@ Muy útil para monitorizar en bucles:</p>
 <span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="fu">req_perform</span>()</span>
 <span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a></span>
 <span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>resp[[<span class="st">&quot;headers&quot;</span>]][[<span class="st">&quot;x-ratelimit-remaining&quot;</span>]] <span class="co"># consultas restantes hoy</span></span></code></pre></div>
-<pre><code>## [1] &quot;9877&quot;</code></pre>
+<pre><code>## [1] &quot;9745&quot;</code></pre>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>resp[[<span class="st">&quot;headers&quot;</span>]][[<span class="st">&quot;x-ratelimit-cost-usd&quot;</span>]]   <span class="co"># coste de esa llamada concreta</span></span></code></pre></div>
 <pre><code>## [1] &quot;0.0001&quot;</code></pre>
 <hr />
 </div>
-<div id="endpoint-1---singleton-gratis" class="section level2">
-<h2>Endpoint 1 - Singleton (gratis)</h2>
+<div id="endpoint-1---singleton-gratis" class="section level3">
+<h3>Endpoint 1 - Singleton (gratis)</h3>
 <p>Recuperar un trabajo concreto por DOI no tiene coste. Ideal cuando ya
 tienes los identificadores y solo quieres los metadatos.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>resp <span class="ot">&lt;-</span> <span class="fu">request</span>(base_url) <span class="sc">|&gt;</span></span>
@@ -1694,10 +1693,11 @@ coste mínimo ($0.10 por 1.000 llamadas):</p>
 ## 2     Biomedical Text Mining and Ontologies</code></pre>
 <hr />
 </div>
-<div id="endpoint-2---list-filter-0.10-por-1.000-llamadas" class="section level2">
-<h2>Endpoint 2 - List + Filter ($0.10 por 1.000 llamadas)</h2>
+<div id="endpoint-2---list-filter-0.10-por-1.000-llamadas" class="section level3">
+<h3>Endpoint 2 - List + Filter ($0.10 por 1.000 llamadas)</h3>
 <p>El más común. Permite filtrar por institución, año, tipo de
 documento, revista… Para INGENIO uso el ROR <code>02rgtxm82</code>.</p>
+</div>
 <div id="antes-de-paginar-estima-el-coste" class="section level3">
 <h3>Antes de paginar, estima el coste</h3>
 <p>La primera llamada devuelve <code>meta$count</code> con el total de
@@ -1744,9 +1744,8 @@ paginas.</p></li>
 <pre><code>## Llamadas para paginarlo todo: 6</code></pre>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Coste estimado total: &quot;</span>, <span class="fu">format</span>(<span class="fu">round</span>(n_calls <span class="sc">*</span> coste_call, <span class="dv">4</span>), <span class="at">scientific =</span> <span class="cn">FALSE</span>), <span class="st">&quot;$</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
 <pre><code>## Coste estimado total: 0.0006$</code></pre>
-</div>
-<div id="construir-el-data.frame" class="section level3">
-<h3>Construir el data.frame</h3>
+<div id="construir-el-data.frame" class="section level4">
+<h4>Construir el data.frame</h4>
 <p><code>fromJSON</code> sin <code>flatten</code> devuelve
 <code>$results</code> con los campos simples ya como columnas de un
 data.frame. Los campos anidados como <code>topics</code> quedan como
@@ -1816,8 +1815,8 @@ Además, el uso de cursor para paginar requiere de un bucle.</p>
 <hr />
 </div>
 </div>
-<div id="endpoint-3---search-1-por-1.000-llamadas" class="section level2">
-<h2>Endpoint 3 - Search ($1 por 1.000 llamadas)</h2>
+<div id="endpoint-3---search-1-por-1.000-llamadas" class="section level3">
+<h3>Endpoint 3 - Search ($1 por 1.000 llamadas)</h3>
 <p>Búsqueda de texto completo en títulos, abstracts y texto completo
 cuando está disponible. Cuesta 10 veces más que list+filter, así que
 solo cuando realmente sea necesario.</p>
@@ -1834,7 +1833,7 @@ solo cuando realmente sea necesario.</p>
 <span id="cb38-11"><a href="#cb38-11" tabindex="-1"></a></span>
 <span id="cb38-12"><a href="#cb38-12" tabindex="-1"></a></span>
 <span id="cb38-13"><a href="#cb38-13" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Consumido hoy: &quot;</span>, resp[[<span class="st">&quot;headers&quot;</span>]][[<span class="st">&quot;x-ratelimit-remaining&quot;</span>]], <span class="st">&quot;$</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
-<pre><code>## Consumido hoy: 9858$</code></pre>
+<pre><code>## Consumido hoy: 9726$</code></pre>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Coste de la última llamada: &quot;</span>, resp[[<span class="st">&quot;headers&quot;</span>]][[<span class="st">&quot;x-ratelimit-cost-usd&quot;</span>]], <span class="st">&quot;$</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
 <pre><code>## Coste de la última llamada: 0.001$</code></pre>
 <div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a>raw       <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">resp_body_string</span>(resp))</span>
@@ -1859,8 +1858,8 @@ solo cuando realmente sea necesario.</p>
 ## 6          28625</code></pre>
 <hr />
 </div>
-<div id="endpoint-4---semantic-search-1-por-1.000-llamadas" class="section level2">
-<h2>Endpoint 4 - Semantic Search ($1 por 1.000 llamadas)</h2>
+<div id="endpoint-4---semantic-search-1-por-1.000-llamadas" class="section level3">
+<h3>Endpoint 4 - Semantic Search ($1 por 1.000 llamadas)</h3>
 <p>Búsqueda semántica con IA. En lugar de palabras clave exactas, busca
 por significado. Útil para explorar literatura cuando no sé exactamente
 qué términos se usan en un campo.</p>
@@ -1929,6 +1928,7 @@ qué términos se usan en un campo.</p>
 ## 24              3
 ## 25              0</code></pre>
 <hr />
+</div>
 </div>
 <div id="lo-mismo-pero-con-openalexr" class="section level2">
 <h2>Lo mismo pero con openalexR 🧅</h2>
@@ -2106,6 +2106,56 @@ código</li>
 <li>Salvo consultas muy reducidas y sencilla, usar cursor para
 paginar</li>
 </ul>
+</div>
+<div id="caso-de-uso---publicaciones-de-ingenio-últimos-5-años" class="section level2">
+<h2>Caso de uso - Publicaciones de INGENIO (últimos 5 años) 🪤</h2>
+<p>Recuperar todos los artículos y reviews en revista de INGENIO entre
+2021 y 2025 con autoría, topic principal, fuente, FWCI y citas, y
+exportarlo a CSV.</p>
+<blockquote>
+<p><strong>Advertencia de coste.</strong> <code>oa_fetch</code> pagina
+automáticamente hasta agotar todos los resultados. Cada 100 registros es
+una llamada de list+filter a $0.10 por 1.000. Para ~300 trabajos son
+unas 3 llamadas, <strong>menos de $0.001</strong>. Si amplías el rango
+temporal o la institución tiene mucha producción, puede subir.</p>
+</blockquote>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" tabindex="-1"></a>ingenio_raw <span class="ot">&lt;-</span> <span class="fu">oa_fetch</span>(</span>
+<span id="cb56-2"><a href="#cb56-2" tabindex="-1"></a>  <span class="at">entity                =</span> <span class="st">&quot;works&quot;</span>,</span>
+<span id="cb56-3"><a href="#cb56-3" tabindex="-1"></a>  <span class="at">institutions.ror      =</span> <span class="st">&quot;https://ror.org/02rgtxm82&quot;</span>,</span>
+<span id="cb56-4"><a href="#cb56-4" tabindex="-1"></a>  <span class="at">from_publication_date =</span> <span class="st">&quot;2021-01-01&quot;</span>,</span>
+<span id="cb56-5"><a href="#cb56-5" tabindex="-1"></a>  <span class="at">to_publication_date   =</span> <span class="st">&quot;2025-12-31&quot;</span>,</span>
+<span id="cb56-6"><a href="#cb56-6" tabindex="-1"></a>  <span class="at">type                  =</span> <span class="fu">c</span>(<span class="st">&quot;article&quot;</span>, <span class="st">&quot;review&quot;</span>),</span>
+<span id="cb56-7"><a href="#cb56-7" tabindex="-1"></a>  <span class="at">verbose               =</span> <span class="cn">TRUE</span></span>
+<span id="cb56-8"><a href="#cb56-8" tabindex="-1"></a>)</span>
+<span id="cb56-9"><a href="#cb56-9" tabindex="-1"></a></span>
+<span id="cb56-10"><a href="#cb56-10" tabindex="-1"></a><span class="co"># Topic principal</span></span>
+<span id="cb56-11"><a href="#cb56-11" tabindex="-1"></a>ingenio_raw<span class="sc">$</span>topic_main <span class="ot">&lt;-</span> <span class="fu">sapply</span>(ingenio_raw<span class="sc">$</span>topics, <span class="cf">function</span>(x) {</span>
+<span id="cb56-12"><a href="#cb56-12" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(x) <span class="sc">&amp;&amp;</span> <span class="fu">nrow</span>(x) <span class="sc">&gt;</span> <span class="dv">0</span>) x<span class="sc">$</span>display_name[<span class="dv">1</span>] <span class="cf">else</span> <span class="cn">NA</span></span>
+<span id="cb56-13"><a href="#cb56-13" tabindex="-1"></a>})</span>
+<span id="cb56-14"><a href="#cb56-14" tabindex="-1"></a></span>
+<span id="cb56-15"><a href="#cb56-15" tabindex="-1"></a><span class="co"># Autores concatenados</span></span>
+<span id="cb56-16"><a href="#cb56-16" tabindex="-1"></a>ingenio_raw<span class="sc">$</span>authors <span class="ot">&lt;-</span> <span class="fu">sapply</span>(ingenio_raw<span class="sc">$</span>authorships, <span class="cf">function</span>(x) {</span>
+<span id="cb56-17"><a href="#cb56-17" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(x) <span class="sc">&amp;&amp;</span> <span class="fu">nrow</span>(x) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">paste</span>(x<span class="sc">$</span>display_name, <span class="at">collapse =</span> <span class="st">&quot;; &quot;</span>) <span class="cf">else</span> <span class="cn">NA</span></span>
+<span id="cb56-18"><a href="#cb56-18" tabindex="-1"></a>})</span>
+<span id="cb56-19"><a href="#cb56-19" tabindex="-1"></a></span>
+<span id="cb56-20"><a href="#cb56-20" tabindex="-1"></a><span class="co"># Seleccionar y renombrar</span></span>
+<span id="cb56-21"><a href="#cb56-21" tabindex="-1"></a>ingenio_df <span class="ot">&lt;-</span> ingenio_raw[, <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>,<span class="st">&quot;display_name&quot;</span>, <span class="st">&quot;authors&quot;</span>, <span class="st">&quot;publication_year&quot;</span>,</span>
+<span id="cb56-22"><a href="#cb56-22" tabindex="-1"></a>                               <span class="st">&quot;type&quot;</span>, <span class="st">&quot;source_display_name&quot;</span>, <span class="st">&quot;topic_main&quot;</span>, <span class="st">&quot;cited_by_count&quot;</span>, <span class="st">&quot;fwci&quot;</span>, <span class="st">&quot;doi&quot;</span>)]</span>
+<span id="cb56-23"><a href="#cb56-23" tabindex="-1"></a></span>
+<span id="cb56-24"><a href="#cb56-24" tabindex="-1"></a><span class="fu">names</span>(ingenio_df)[<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">6</span>)] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;title&quot;</span>, <span class="st">&quot;source&quot;</span>)</span>
+<span id="cb56-25"><a href="#cb56-25" tabindex="-1"></a></span>
+<span id="cb56-26"><a href="#cb56-26" tabindex="-1"></a><span class="fu">head</span>(ingenio_df)</span></code></pre></div>
+<pre><code>## # A tibble: 6 × 10
+##   id       title authors publication_year type  source topic_main cited_by_count
+##   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;              &lt;int&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;               &lt;int&gt;
+## 1 https:/… The … Federi…             2021 arti… Globa… Disaster …            216
+## 2 https:/… Digi… Artur …             2021 arti… Resea… Regional …            151
+## 3 https:/… A fo… Jordi …             2021 arti… Resea… Sustainab…            111
+## 4 https:/… Agro… Rachel…             2023 arti… Curre… Agricultu…            108
+## 5 https:/… Cont… Carmel…             2021 arti… Remot… Flood Ris…             72
+## 6 https:/… Syne… Joyash…             2022 revi… Human… Climate C…             72
+## # ℹ 2 more variables: fwci &lt;dbl&gt;, doi &lt;chr&gt;</code></pre>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" tabindex="-1"></a><span class="fu">write.csv</span>(ingenio_df, <span class="st">&quot;ingenio_works.csv&quot;</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">fileEncoding =</span> <span class="st">&quot;UTF-8&quot;</span>)</span></code></pre></div>
 </div>
 
 
