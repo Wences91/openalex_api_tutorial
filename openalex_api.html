@@ -1615,11 +1615,11 @@ se usa bien.</p>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Presupuesto diario: &quot;</span>, rl<span class="sc">$</span>daily_budget_usd, <span class="st">&quot;$</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
 <pre><code>## Presupuesto diario: 1$</code></pre>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Consumido hoy: &quot;</span>, rl<span class="sc">$</span>daily_used_usd, <span class="st">&quot;$</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
-<pre><code>## Consumido hoy: 0.0254$</code></pre>
+<pre><code>## Consumido hoy: 0.0418$</code></pre>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Restante: &quot;</span>, rl<span class="sc">$</span>daily_remaining_usd, <span class="st">&quot;$</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
-<pre><code>## Restante: 0.9746$</code></pre>
+<pre><code>## Restante: 0.9582$</code></pre>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Reset en: &quot;</span>,  <span class="fu">round</span>(rl<span class="sc">$</span>resets_in_seconds <span class="sc">/</span> <span class="dv">3600</span>, <span class="dv">1</span>), <span class="st">&quot;horas</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
-<pre><code>## Reset en: 14.2horas</code></pre>
+<pre><code>## Reset en: 13.1horas</code></pre>
 <p>También puedes verlo visualmente en <a href="https://openalex.org/settings/usage">openalex.org/settings/usage</a>.</p>
 <p>Además, cada respuesta incluye headers con el estado de la llamada.
 Muy útil para monitorizar en bucles:</p>
@@ -1629,7 +1629,7 @@ Muy útil para monitorizar en bucles:</p>
 <span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="fu">req_perform</span>()</span>
 <span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a></span>
 <span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>resp[[<span class="st">&quot;headers&quot;</span>]][[<span class="st">&quot;x-ratelimit-remaining&quot;</span>]] <span class="co"># consultas restantes hoy</span></span></code></pre></div>
-<pre><code>## [1] &quot;9745&quot;</code></pre>
+<pre><code>## [1] &quot;9581&quot;</code></pre>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>resp[[<span class="st">&quot;headers&quot;</span>]][[<span class="st">&quot;x-ratelimit-cost-usd&quot;</span>]]   <span class="co"># coste de esa llamada concreta</span></span></code></pre></div>
 <pre><code>## [1] &quot;0.0001&quot;</code></pre>
 <hr />
@@ -1739,7 +1739,7 @@ paginas.</p></li>
 <span id="cb28-15"><a href="#cb28-15" tabindex="-1"></a>n_calls    <span class="ot">&lt;-</span> <span class="fu">ceiling</span>(total <span class="sc">/</span> <span class="dv">100</span>)</span>
 <span id="cb28-16"><a href="#cb28-16" tabindex="-1"></a></span>
 <span id="cb28-17"><a href="#cb28-17" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Total resultados: &quot;</span>, total, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
-<pre><code>## Total resultados: 552</code></pre>
+<pre><code>## Total resultados: 553</code></pre>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Llamadas para paginarlo todo: &quot;</span>, n_calls, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
 <pre><code>## Llamadas para paginarlo todo: 6</code></pre>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Coste estimado total: &quot;</span>, <span class="fu">format</span>(<span class="fu">round</span>(n_calls <span class="sc">*</span> coste_call, <span class="dv">4</span>), <span class="at">scientific =</span> <span class="cn">FALSE</span>), <span class="st">&quot;$</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
@@ -1758,7 +1758,7 @@ Además, el uso de cursor para paginar requiere de un bucle.</p>
 <span id="cb34-5"><a href="#cb34-5" tabindex="-1"></a>  resp <span class="ot">&lt;-</span> <span class="fu">request</span>(base_url) <span class="sc">|&gt;</span></span>
 <span id="cb34-6"><a href="#cb34-6" tabindex="-1"></a>    <span class="fu">req_url_path_append</span>(<span class="st">&quot;works&quot;</span>) <span class="sc">|&gt;</span></span>
 <span id="cb34-7"><a href="#cb34-7" tabindex="-1"></a>    <span class="fu">req_url_query</span>(</span>
-<span id="cb34-8"><a href="#cb34-8" tabindex="-1"></a>      <span class="at">filter   =</span> <span class="st">&quot;institutions.ror:https://ror.org/02rgtxm82,publication_year:2020-2025&quot;</span>,</span>
+<span id="cb34-8"><a href="#cb34-8" tabindex="-1"></a>      <span class="at">filter   =</span> <span class="st">&quot;institutions.ror:https://ror.org/02rgtxm82,publication_year:2021-2025,primary_location.source.type:journal&quot;</span>, <span class="co"># source aquí es clave para eliminar ruido</span></span>
 <span id="cb34-9"><a href="#cb34-9" tabindex="-1"></a>      <span class="at">per_page =</span> <span class="dv">100</span>,</span>
 <span id="cb34-10"><a href="#cb34-10" tabindex="-1"></a>      <span class="at">select   =</span> <span class="st">&quot;id,title,publication_year,cited_by_count,fwci,topics&quot;</span>,</span>
 <span id="cb34-11"><a href="#cb34-11" tabindex="-1"></a>      <span class="at">cursor   =</span> cursor,</span>
@@ -1782,36 +1782,36 @@ Además, el uso de cursor para paginar requiere de un bucle.</p>
 <span id="cb34-29"><a href="#cb34-29" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;Descargados: &quot;</span>, <span class="fu">round</span>(<span class="dv">100</span><span class="sc">*</span><span class="fu">dim</span>(all_results)[<span class="dv">1</span>]<span class="sc">/</span>raw<span class="sc">$</span>meta<span class="sc">$</span>count,<span class="dv">1</span>), <span class="st">&quot;%</span><span class="sc">\r</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span>
 <span id="cb34-30"><a href="#cb34-30" tabindex="-1"></a>  </span>
 <span id="cb34-31"><a href="#cb34-31" tabindex="-1"></a>}</span></code></pre></div>
-<pre><code>## Descargados: 18.1%Descargados: 36.2%Descargados: 54.3%Descargados: 72.5%Descargados: 90.6%Descargados: 100%</code></pre>
+<pre><code>## Descargados: 32.3%Descargados: 64.5%Descargados: 96.8%Descargados: 100%</code></pre>
 <div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a><span class="fu">head</span>(all_results)</span></code></pre></div>
 <pre><code>##                                 id
 ## 1 https://openalex.org/W3187328245
 ## 2 https://openalex.org/W3191187183
-## 3 https://openalex.org/W2941639461
-## 4 https://openalex.org/W3190960735
-## 5 https://openalex.org/W4361266957
-## 6 https://openalex.org/W2906370785
-##                                                                                       title
-## 1                     The trap of climate change-induced “natural” disasters and inequality
-## 2        Digital skills, relatedness and green diversification: A study of European regions
-## 3            Specialisation, diversification and the ladder of green technology development
-## 4              A formative approach to the evaluation of Transformative Innovation Policies
-## 5 Agroecology as a transformative approach to tackle climatic, food, and ecosystemic crises
-## 6                  Specialization, Diversification, and Environmental Technology Life Cycle
+## 3 https://openalex.org/W3190960735
+## 4 https://openalex.org/W4361266957
+## 5 https://openalex.org/W3198704200
+## 6 https://openalex.org/W4289261059
+##                                                                                                                       title
+## 1                                                     The trap of climate change-induced “natural” disasters and inequality
+## 2                                        Digital skills, relatedness and green diversification: A study of European regions
+## 3                                              A formative approach to the evaluation of Transformative Innovation Policies
+## 4                                 Agroecology as a transformative approach to tackle climatic, food, and ecosystemic crises
+## 5       Continuous Monitoring of the Flooding Dynamics in the Albufera Wetland (Spain) by Landsat-8 and Sentinel-2 Datasets
+## 6 Synergies and trade-offs between climate change adaptation options and gender equality: a review of the global literature
 ##   publication_year cited_by_count    fwci
 ## 1             2021            216 50.6832
-## 2             2021            151 28.6392
-## 3             2020            127 17.7235
-## 4             2021            111  9.1365
-## 5             2023            108 69.8176
-## 6             2020             82 12.2077
+## 2             2021            153 28.6406
+## 3             2021            111  9.1365
+## 4             2023            108 69.8176
+## 5             2021             72  6.4294
+## 6             2022             72 25.3613
 ##                                          topic
 ## 1           Disaster Management and Resilience
 ## 2      Regional Economics and Spatial Analysis
-## 3        Economic and Technological Innovation
-## 4 Sustainability and Climate Change Governance
-## 5     Agriculture, Land Use, Rural Development
-## 6            Intellectual Property and Patents</code></pre>
+## 3 Sustainability and Climate Change Governance
+## 4     Agriculture, Land Use, Rural Development
+## 5         Flood Risk Assessment and Management
+## 6        Climate Change, Adaptation, Migration</code></pre>
 <hr />
 </div>
 </div>
@@ -1833,14 +1833,14 @@ solo cuando realmente sea necesario.</p>
 <span id="cb38-11"><a href="#cb38-11" tabindex="-1"></a></span>
 <span id="cb38-12"><a href="#cb38-12" tabindex="-1"></a></span>
 <span id="cb38-13"><a href="#cb38-13" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Consumido hoy: &quot;</span>, resp[[<span class="st">&quot;headers&quot;</span>]][[<span class="st">&quot;x-ratelimit-remaining&quot;</span>]], <span class="st">&quot;$</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
-<pre><code>## Consumido hoy: 9726$</code></pre>
+<pre><code>## Consumido hoy: 9564$</code></pre>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Coste de la última llamada: &quot;</span>, resp[[<span class="st">&quot;headers&quot;</span>]][[<span class="st">&quot;x-ratelimit-cost-usd&quot;</span>]], <span class="st">&quot;$</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
 <pre><code>## Coste de la última llamada: 0.001$</code></pre>
 <div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a>raw       <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">resp_body_string</span>(resp))</span>
 <span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a>search_df <span class="ot">&lt;-</span> raw<span class="sc">$</span>results</span>
 <span id="cb42-3"><a href="#cb42-3" tabindex="-1"></a></span>
 <span id="cb42-4"><a href="#cb42-4" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Resultados encontrados:&quot;</span>, raw<span class="sc">$</span>meta<span class="sc">$</span>count, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
-<pre><code>## Resultados encontrados: 1168689</code></pre>
+<pre><code>## Resultados encontrados: 1169103</code></pre>
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a><span class="fu">head</span>(search_df[, <span class="fu">c</span>(<span class="st">&quot;title&quot;</span>, <span class="st">&quot;cited_by_count&quot;</span>)])</span></code></pre></div>
 <pre><code>##                                                                          title
 ## 1                                              Official Methods of Analysis of
@@ -1851,11 +1851,11 @@ solo cuando realmente sea necesario.</p>
 ## 6     Use of Dinitrosalicylic Acid Reagent for Determination of Reducing Sugar
 ##   cited_by_count
 ## 1          59552
-## 2          51585
-## 3          39457
-## 4          37207
-## 5          29659
-## 6          28625</code></pre>
+## 2          51592
+## 3          39494
+## 4          37250
+## 5          29660
+## 6          28631</code></pre>
 <hr />
 </div>
 <div id="endpoint-4---semantic-search-1-por-1.000-llamadas" class="section level3">
@@ -1970,24 +1970,25 @@ limpias.</p>
 <span id="cb52-3"><a href="#cb52-3" tabindex="-1"></a>  <span class="at">institutions.ror      =</span> <span class="st">&quot;https://ror.org/02rgtxm82&quot;</span>,</span>
 <span id="cb52-4"><a href="#cb52-4" tabindex="-1"></a>  <span class="at">from_publication_date =</span> <span class="st">&quot;2020-01-01&quot;</span>,</span>
 <span id="cb52-5"><a href="#cb52-5" tabindex="-1"></a>  <span class="at">to_publication_date   =</span> <span class="st">&quot;2025-12-31&quot;</span>,</span>
-<span id="cb52-6"><a href="#cb52-6" tabindex="-1"></a>  <span class="at">verbose               =</span> <span class="cn">TRUE</span></span>
-<span id="cb52-7"><a href="#cb52-7" tabindex="-1"></a>)</span>
-<span id="cb52-8"><a href="#cb52-8" tabindex="-1"></a></span>
-<span id="cb52-9"><a href="#cb52-9" tabindex="-1"></a><span class="co"># Topic principal</span></span>
-<span id="cb52-10"><a href="#cb52-10" tabindex="-1"></a>works_ingenio<span class="sc">$</span>topic_main <span class="ot">&lt;-</span> <span class="fu">sapply</span>(works_ingenio<span class="sc">$</span>topics, <span class="cf">function</span>(x) {</span>
-<span id="cb52-11"><a href="#cb52-11" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(x) <span class="sc">&amp;&amp;</span> <span class="fu">nrow</span>(x) <span class="sc">&gt;</span> <span class="dv">0</span>) x<span class="sc">$</span>display_name[<span class="dv">1</span>] <span class="cf">else</span> <span class="cn">NA</span></span>
-<span id="cb52-12"><a href="#cb52-12" tabindex="-1"></a>})</span>
-<span id="cb52-13"><a href="#cb52-13" tabindex="-1"></a></span>
-<span id="cb52-14"><a href="#cb52-14" tabindex="-1"></a><span class="fu">head</span>(works_ingenio[, <span class="fu">c</span>(<span class="st">&quot;display_name&quot;</span>, <span class="st">&quot;publication_year&quot;</span>, <span class="st">&quot;cited_by_count&quot;</span>, <span class="st">&quot;topic_main&quot;</span>)])</span></code></pre></div>
+<span id="cb52-6"><a href="#cb52-6" tabindex="-1"></a>  <span class="at">primary_location.source.type  =</span> <span class="st">&quot;journal&quot;</span>, <span class="co"># clave parar eliminar ruido</span></span>
+<span id="cb52-7"><a href="#cb52-7" tabindex="-1"></a>  <span class="at">verbose               =</span> <span class="cn">TRUE</span></span>
+<span id="cb52-8"><a href="#cb52-8" tabindex="-1"></a>)</span>
+<span id="cb52-9"><a href="#cb52-9" tabindex="-1"></a></span>
+<span id="cb52-10"><a href="#cb52-10" tabindex="-1"></a><span class="co"># Topic principal</span></span>
+<span id="cb52-11"><a href="#cb52-11" tabindex="-1"></a>works_ingenio<span class="sc">$</span>topic_main <span class="ot">&lt;-</span> <span class="fu">sapply</span>(works_ingenio<span class="sc">$</span>topics, <span class="cf">function</span>(x) {</span>
+<span id="cb52-12"><a href="#cb52-12" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(x) <span class="sc">&amp;&amp;</span> <span class="fu">nrow</span>(x) <span class="sc">&gt;</span> <span class="dv">0</span>) x<span class="sc">$</span>display_name[<span class="dv">1</span>] <span class="cf">else</span> <span class="cn">NA</span></span>
+<span id="cb52-13"><a href="#cb52-13" tabindex="-1"></a>})</span>
+<span id="cb52-14"><a href="#cb52-14" tabindex="-1"></a></span>
+<span id="cb52-15"><a href="#cb52-15" tabindex="-1"></a><span class="fu">head</span>(works_ingenio[, <span class="fu">c</span>(<span class="st">&quot;display_name&quot;</span>, <span class="st">&quot;publication_year&quot;</span>, <span class="st">&quot;cited_by_count&quot;</span>, <span class="st">&quot;topic_main&quot;</span>)])</span></code></pre></div>
 <pre><code>## # A tibble: 6 × 4
 ##   display_name                        publication_year cited_by_count topic_main
 ##   &lt;chr&gt;                                          &lt;int&gt;          &lt;int&gt; &lt;chr&gt;     
 ## 1 The trap of climate change-induced…             2021            216 Disaster …
-## 2 Digital skills, relatedness and gr…             2021            151 Regional …
+## 2 Digital skills, relatedness and gr…             2021            153 Regional …
 ## 3 Specialisation, diversification an…             2020            127 Economic …
 ## 4 A formative approach to the evalua…             2021            111 Sustainab…
 ## 5 Agroecology as a transformative ap…             2023            108 Agricultu…
-## 6 Specialization, Diversification, a…             2020             82 Intellect…</code></pre>
+## 6 Specialization, Diversification, a…             2020             83 Intellect…</code></pre>
 </div>
 <div id="search-por-título" class="section level3">
 <h3>Search por título</h3>
@@ -2006,7 +2007,7 @@ limpias.</p>
 ##   display_name                                                    cited_by_count
 ##   &lt;chr&gt;                                                                    &lt;int&gt;
 ## 1 Mapping the electronic word-of-mouth (eWOM) research: A system…            452
-## 2 Roles and Research Trends of Artificial Intelligence in Mathem…            361
+## 2 Roles and Research Trends of Artificial Intelligence in Mathem…            362
 ## 3 Mental Health and Well-Being of University Students: A Bibliom…            345
 ## 4 Mapping A Discipline: A Guide to Using VOSviewer for Bibliomet…            294
 ## 5 Mapping Knowledge Structure and Themes Trends of Osteoporosis …            202
@@ -2125,31 +2126,32 @@ temporal o la institución tiene mucha producción, puede subir.</p>
 <span id="cb56-4"><a href="#cb56-4" tabindex="-1"></a>  <span class="at">from_publication_date =</span> <span class="st">&quot;2021-01-01&quot;</span>,</span>
 <span id="cb56-5"><a href="#cb56-5" tabindex="-1"></a>  <span class="at">to_publication_date   =</span> <span class="st">&quot;2025-12-31&quot;</span>,</span>
 <span id="cb56-6"><a href="#cb56-6" tabindex="-1"></a>  <span class="at">type                  =</span> <span class="fu">c</span>(<span class="st">&quot;article&quot;</span>, <span class="st">&quot;review&quot;</span>),</span>
-<span id="cb56-7"><a href="#cb56-7" tabindex="-1"></a>  <span class="at">verbose               =</span> <span class="cn">TRUE</span></span>
-<span id="cb56-8"><a href="#cb56-8" tabindex="-1"></a>)</span>
-<span id="cb56-9"><a href="#cb56-9" tabindex="-1"></a></span>
-<span id="cb56-10"><a href="#cb56-10" tabindex="-1"></a><span class="co"># Topic principal</span></span>
-<span id="cb56-11"><a href="#cb56-11" tabindex="-1"></a>ingenio_raw<span class="sc">$</span>topic_main <span class="ot">&lt;-</span> <span class="fu">sapply</span>(ingenio_raw<span class="sc">$</span>topics, <span class="cf">function</span>(x) {</span>
-<span id="cb56-12"><a href="#cb56-12" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(x) <span class="sc">&amp;&amp;</span> <span class="fu">nrow</span>(x) <span class="sc">&gt;</span> <span class="dv">0</span>) x<span class="sc">$</span>display_name[<span class="dv">1</span>] <span class="cf">else</span> <span class="cn">NA</span></span>
-<span id="cb56-13"><a href="#cb56-13" tabindex="-1"></a>})</span>
-<span id="cb56-14"><a href="#cb56-14" tabindex="-1"></a></span>
-<span id="cb56-15"><a href="#cb56-15" tabindex="-1"></a><span class="co"># Autores concatenados</span></span>
-<span id="cb56-16"><a href="#cb56-16" tabindex="-1"></a>ingenio_raw<span class="sc">$</span>authors <span class="ot">&lt;-</span> <span class="fu">sapply</span>(ingenio_raw<span class="sc">$</span>authorships, <span class="cf">function</span>(x) {</span>
-<span id="cb56-17"><a href="#cb56-17" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(x) <span class="sc">&amp;&amp;</span> <span class="fu">nrow</span>(x) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">paste</span>(x<span class="sc">$</span>display_name, <span class="at">collapse =</span> <span class="st">&quot;; &quot;</span>) <span class="cf">else</span> <span class="cn">NA</span></span>
-<span id="cb56-18"><a href="#cb56-18" tabindex="-1"></a>})</span>
-<span id="cb56-19"><a href="#cb56-19" tabindex="-1"></a></span>
-<span id="cb56-20"><a href="#cb56-20" tabindex="-1"></a><span class="co"># Seleccionar y renombrar</span></span>
-<span id="cb56-21"><a href="#cb56-21" tabindex="-1"></a>ingenio_df <span class="ot">&lt;-</span> ingenio_raw[, <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>,<span class="st">&quot;display_name&quot;</span>, <span class="st">&quot;authors&quot;</span>, <span class="st">&quot;publication_year&quot;</span>,</span>
-<span id="cb56-22"><a href="#cb56-22" tabindex="-1"></a>                               <span class="st">&quot;type&quot;</span>, <span class="st">&quot;source_display_name&quot;</span>, <span class="st">&quot;topic_main&quot;</span>, <span class="st">&quot;cited_by_count&quot;</span>, <span class="st">&quot;fwci&quot;</span>, <span class="st">&quot;doi&quot;</span>)]</span>
-<span id="cb56-23"><a href="#cb56-23" tabindex="-1"></a></span>
-<span id="cb56-24"><a href="#cb56-24" tabindex="-1"></a><span class="fu">names</span>(ingenio_df)[<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">6</span>)] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;title&quot;</span>, <span class="st">&quot;source&quot;</span>)</span>
-<span id="cb56-25"><a href="#cb56-25" tabindex="-1"></a></span>
-<span id="cb56-26"><a href="#cb56-26" tabindex="-1"></a><span class="fu">head</span>(ingenio_df)</span></code></pre></div>
+<span id="cb56-7"><a href="#cb56-7" tabindex="-1"></a>  <span class="at">primary_location.source.type  =</span> <span class="st">&quot;journal&quot;</span>,</span>
+<span id="cb56-8"><a href="#cb56-8" tabindex="-1"></a>  <span class="at">verbose               =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb56-9"><a href="#cb56-9" tabindex="-1"></a>)</span>
+<span id="cb56-10"><a href="#cb56-10" tabindex="-1"></a></span>
+<span id="cb56-11"><a href="#cb56-11" tabindex="-1"></a><span class="co"># Topic principal</span></span>
+<span id="cb56-12"><a href="#cb56-12" tabindex="-1"></a>ingenio_raw<span class="sc">$</span>topic_main <span class="ot">&lt;-</span> <span class="fu">sapply</span>(ingenio_raw<span class="sc">$</span>topics, <span class="cf">function</span>(x) {</span>
+<span id="cb56-13"><a href="#cb56-13" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(x) <span class="sc">&amp;&amp;</span> <span class="fu">nrow</span>(x) <span class="sc">&gt;</span> <span class="dv">0</span>) x<span class="sc">$</span>display_name[<span class="dv">1</span>] <span class="cf">else</span> <span class="cn">NA</span></span>
+<span id="cb56-14"><a href="#cb56-14" tabindex="-1"></a>})</span>
+<span id="cb56-15"><a href="#cb56-15" tabindex="-1"></a></span>
+<span id="cb56-16"><a href="#cb56-16" tabindex="-1"></a><span class="co"># Autores concatenados</span></span>
+<span id="cb56-17"><a href="#cb56-17" tabindex="-1"></a>ingenio_raw<span class="sc">$</span>authors <span class="ot">&lt;-</span> <span class="fu">sapply</span>(ingenio_raw<span class="sc">$</span>authorships, <span class="cf">function</span>(x) {</span>
+<span id="cb56-18"><a href="#cb56-18" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(x) <span class="sc">&amp;&amp;</span> <span class="fu">nrow</span>(x) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">paste</span>(x<span class="sc">$</span>display_name, <span class="at">collapse =</span> <span class="st">&quot;; &quot;</span>) <span class="cf">else</span> <span class="cn">NA</span></span>
+<span id="cb56-19"><a href="#cb56-19" tabindex="-1"></a>})</span>
+<span id="cb56-20"><a href="#cb56-20" tabindex="-1"></a></span>
+<span id="cb56-21"><a href="#cb56-21" tabindex="-1"></a><span class="co"># Seleccionar y renombrar</span></span>
+<span id="cb56-22"><a href="#cb56-22" tabindex="-1"></a>ingenio_df <span class="ot">&lt;-</span> ingenio_raw[, <span class="fu">c</span>(<span class="st">&quot;id&quot;</span>,<span class="st">&quot;display_name&quot;</span>, <span class="st">&quot;authors&quot;</span>, <span class="st">&quot;publication_year&quot;</span>,</span>
+<span id="cb56-23"><a href="#cb56-23" tabindex="-1"></a>                               <span class="st">&quot;type&quot;</span>, <span class="st">&quot;source_display_name&quot;</span>, <span class="st">&quot;topic_main&quot;</span>, <span class="st">&quot;cited_by_count&quot;</span>, <span class="st">&quot;fwci&quot;</span>, <span class="st">&quot;doi&quot;</span>)]</span>
+<span id="cb56-24"><a href="#cb56-24" tabindex="-1"></a></span>
+<span id="cb56-25"><a href="#cb56-25" tabindex="-1"></a><span class="fu">names</span>(ingenio_df)[<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">6</span>)] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;title&quot;</span>, <span class="st">&quot;source&quot;</span>)</span>
+<span id="cb56-26"><a href="#cb56-26" tabindex="-1"></a></span>
+<span id="cb56-27"><a href="#cb56-27" tabindex="-1"></a><span class="fu">head</span>(ingenio_df)</span></code></pre></div>
 <pre><code>## # A tibble: 6 × 10
 ##   id       title authors publication_year type  source topic_main cited_by_count
 ##   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;              &lt;int&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;               &lt;int&gt;
 ## 1 https:/… The … Federi…             2021 arti… Globa… Disaster …            216
-## 2 https:/… Digi… Artur …             2021 arti… Resea… Regional …            151
+## 2 https:/… Digi… Artur …             2021 arti… Resea… Regional …            153
 ## 3 https:/… A fo… Jordi …             2021 arti… Resea… Sustainab…            111
 ## 4 https:/… Agro… Rachel…             2023 arti… Curre… Agricultu…            108
 ## 5 https:/… Cont… Carmel…             2021 arti… Remot… Flood Ris…             72

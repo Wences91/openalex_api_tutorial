@@ -175,7 +175,7 @@ while (!is.null(cursor)) {
   resp <- request(base_url) |>
     req_url_path_append("works") |>
     req_url_query(
-      filter   = "institutions.ror:https://ror.org/02rgtxm82,publication_year:2020-2025",
+      filter   = "institutions.ror:https://ror.org/02rgtxm82,publication_year:2021-2025,primary_location.source.type:journal", # source aquí es clave para eliminar ruido
       per_page = 100,
       select   = "id,title,publication_year,cited_by_count,fwci,topics",
       cursor   = cursor,
@@ -297,6 +297,7 @@ works_ingenio <- oa_fetch(
   institutions.ror      = "https://ror.org/02rgtxm82",
   from_publication_date = "2020-01-01",
   to_publication_date   = "2025-12-31",
+  primary_location.source.type  = "journal", # clave parar eliminar ruido
   verbose               = TRUE
 )
 
@@ -370,7 +371,8 @@ ingenio_raw <- oa_fetch(
   from_publication_date = "2021-01-01",
   to_publication_date   = "2025-12-31",
   type                  = c("article", "review"),
-  verbose               = TRUE
+  primary_location.source.type  = "journal",
+  verbose               = TRUE,
 )
 
 # Topic principal
